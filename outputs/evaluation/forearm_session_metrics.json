@@ -1,0 +1,136 @@
+{
+  "forearm_movement": {
+    "accuracy": 0.7239583333333334,
+    "macro_f1": 0.7160256870487814,
+    "balanced_accuracy": 0.7239583333333334,
+    "per_class_recall": {
+      "Neutral": 1.0,
+      "Pronation": 0.625,
+      "Supination": 0.546875
+    },
+    "confusion_matrix": [
+      [
+        64,
+        0,
+        0
+      ],
+      [
+        1,
+        40,
+        23
+      ],
+      [
+        8,
+        21,
+        35
+      ]
+    ],
+    "decision_count": 192,
+    "evaluation_kind": "held-out-participant repeated-window session decision",
+    "windows_per_decision": 10,
+    "held_out_subjects": [
+      1,
+      7,
+      11,
+      16,
+      25,
+      30,
+      42,
+      50
+    ],
+    "single_window_reference": {
+      "accuracy": 0.6583333333333333,
+      "macro_f1": 0.6483249223611952,
+      "per_class_recall": {
+        "Neutral": 0.9484375,
+        "Pronation": 0.521875,
+        "Supination": 0.5046875
+      },
+      "confusion_matrix": [
+        [
+          607,
+          0,
+          33
+        ],
+        [
+          33,
+          334,
+          273
+        ],
+        [
+          134,
+          183,
+          323
+        ]
+      ],
+      "sample_count": 1920,
+      "held_out_subject_count": 8,
+      "test_subjects": [
+        1,
+        7,
+        11,
+        16,
+        25,
+        30,
+        42,
+        50
+      ]
+    }
+  },
+  "forearm_fatigue": {
+    "accuracy": 0.8125,
+    "macro_f1": 0.8111888111888111,
+    "balanced_accuracy": 0.8125,
+    "per_class_recall": {
+      "Low-fatigue phase": 0.7291666666666666,
+      "Fatigue-like phase": 0.8958333333333334
+    },
+    "confusion_matrix": [
+      [
+        35,
+        13
+      ],
+      [
+        5,
+        43
+      ]
+    ],
+    "decision_count": 96,
+    "roc_auc": 0.8563368055555556,
+    "evaluation_kind": "held-out-participant sustained-window decision",
+    "windows_per_decision": 9,
+    "evidence_span_seconds": 12.8,
+    "held_out_subjects": [
+      9,
+      14,
+      15
+    ],
+    "single_window_reference": {
+      "accuracy": 0.7679924242424242,
+      "macro_f1": 0.766752283388042,
+      "roc_auc": 0.8135402318640955,
+      "per_class_recall": {
+        "Low-fatigue phase": 0.6950757575757576,
+        "Fatigue-like phase": 0.8409090909090909
+      },
+      "confusion_matrix": [
+        [
+          367,
+          161
+        ],
+        [
+          84,
+          444
+        ]
+      ],
+      "sample_count": 1056,
+      "held_out_subject_count": 3,
+      "test_subjects": [
+        9,
+        14,
+        15
+      ]
+    }
+  },
+  "reporting_rule": "Repeated-window metrics are operational session decisions and must not be relabelled as single-window checkpoint accuracy."
+}

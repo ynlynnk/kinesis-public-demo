@@ -1,0 +1,196 @@
+{
+  "evaluation_definition": {
+    "why_not_single_accuracy": "Model 2 explains retrieved evidence rather than assigning a single ground-truth class. It is evaluated on retrieval, grounding, fact preservation, role safety and scope control.",
+    "planner_pass_rate": "Correct intent and tool plan / benchmark questions",
+    "guardrail_pass_rate": "Passed deterministic provider, fallback, role and scope checks / all checks",
+    "live_grounding_pass_rate": "Passed evidence and safety assertions / all assertions across live responses"
+  },
+  "planner": {
+    "passed": 4,
+    "total": 4,
+    "pass_rate": 1.0,
+    "cases": [
+      {
+        "name": "overall summary retrieves all required evidence",
+        "question": "Summarise the overall session",
+        "intents": [
+          "fatigue",
+          "movement",
+          "progress",
+          "review"
+        ],
+        "tools": [
+          "list_available_sessions",
+          "get_model1_outputs",
+          "compare_session_trends",
+          "get_session_visualisation",
+          "get_feedback_status",
+          "get_review_history"
+        ],
+        "in_scope": true,
+        "passed": true,
+        "actual": {
+          "user_query": "Summarise the overall session",
+          "in_scope": true,
+          "intents": [
+            "fatigue",
+            "movement",
+            "progress",
+            "review"
+          ],
+          "mcp_tools": [
+            "list_available_sessions",
+            "get_model1_outputs",
+            "compare_session_trends",
+            "get_session_visualisation",
+            "get_feedback_status",
+            "get_review_history"
+          ]
+        }
+      },
+      {
+        "name": "fatigue trend retrieves fatigue and progress evidence",
+        "question": "How has fatigue changed from the previous session?",
+        "intents": [
+          "fatigue",
+          "progress"
+        ],
+        "tools": [
+          "list_available_sessions",
+          "get_model1_outputs",
+          "compare_session_trends",
+          "get_session_visualisation"
+        ],
+        "in_scope": true,
+        "passed": true,
+        "actual": {
+          "user_query": "How has fatigue changed from the previous session?",
+          "in_scope": true,
+          "intents": [
+            "fatigue",
+            "progress"
+          ],
+          "mcp_tools": [
+            "list_available_sessions",
+            "get_model1_outputs",
+            "compare_session_trends",
+            "get_session_visualisation"
+          ]
+        }
+      },
+      {
+        "name": "movement review retrieves review evidence",
+        "question": "Review the movement result",
+        "intents": [
+          "movement",
+          "review"
+        ],
+        "tools": [
+          "list_available_sessions",
+          "get_model1_outputs",
+          "get_session_visualisation",
+          "get_feedback_status",
+          "get_review_history"
+        ],
+        "in_scope": true,
+        "passed": true,
+        "actual": {
+          "user_query": "Review the movement result",
+          "in_scope": true,
+          "intents": [
+            "movement",
+            "review"
+          ],
+          "mcp_tools": [
+            "list_available_sessions",
+            "get_model1_outputs",
+            "get_session_visualisation",
+            "get_feedback_status",
+            "get_review_history"
+          ]
+        }
+      },
+      {
+        "name": "unrelated question is rejected before external AI",
+        "question": "What will the weather be tomorrow?",
+        "intents": [],
+        "tools": [
+          "list_available_sessions",
+          "get_model1_outputs"
+        ],
+        "in_scope": false,
+        "passed": true,
+        "actual": {
+          "user_query": "What will the weather be tomorrow?",
+          "in_scope": false,
+          "intents": [],
+          "mcp_tools": [
+            "list_available_sessions",
+            "get_model1_outputs"
+          ]
+        }
+      }
+    ]
+  },
+  "guardrails": {
+    "passed": 8,
+    "total": 8,
+    "pass_rate": 1.0,
+    "cases": [
+      {
+        "name": "test_without_key_uses_local_mode",
+        "passed": true,
+        "error": null
+      },
+      {
+        "name": "test_model_output_windows_are_used_when_visualisation_is_not_requested",
+        "passed": true,
+        "error": null
+      },
+      {
+        "name": "test_gemini_is_selected_and_cannot_change_model1_facts",
+        "passed": true,
+        "error": null
+      },
+      {
+        "name": "test_claude_changes_words_but_not_model1_facts",
+        "passed": true,
+        "error": null
+      },
+      {
+        "name": "test_patient_answer_uses_minimum_necessary_evidence",
+        "passed": true,
+        "error": null
+      },
+      {
+        "name": "test_gemini_patient_answer_uses_minimum_necessary_evidence",
+        "passed": true,
+        "error": null
+      },
+      {
+        "name": "test_gemini_failure_is_clearly_marked_as_local_fallback",
+        "passed": true,
+        "error": null
+      },
+      {
+        "name": "test_unrelated_patient_question_skips_external_ai",
+        "passed": true,
+        "error": null
+      }
+    ]
+  },
+  "live_grounding": {
+    "status": "not_requested",
+    "reason": "Run with --live to evaluate actual Gemini/Claude responses.",
+    "cases": [],
+    "passed_checks": 0,
+    "total_checks": 0,
+    "pass_rate": null
+  },
+  "important_limitations": [
+    "A pass rate on three prepared sessions is a development benchmark, not clinical validation.",
+    "Human review is still required to judge clarity, usefulness and subtle unsupported implications.",
+    "Provider model updates can change responses, so the live benchmark should be rerun before a presentation or release.",
+    "Model 2 does not create or validate Model 1 sensor measurements."
+  ]
+}

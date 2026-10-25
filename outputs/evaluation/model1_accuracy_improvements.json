@@ -1,0 +1,590 @@
+{
+  "report_scope": "Research candidates evaluated without replacing the currently deployed dashboard checkpoints.",
+  "forearm_movement": {
+    "current_deployed_single_window": {
+      "accuracy": 0.6583333333333333,
+      "macro_f1": 0.6483249223611952,
+      "per_class_recall": {
+        "Neutral": 0.9484375,
+        "Pronation": 0.521875,
+        "Supination": 0.5046875
+      },
+      "confusion_matrix": [
+        [
+          607,
+          0,
+          33
+        ],
+        [
+          33,
+          334,
+          273
+        ],
+        [
+          134,
+          183,
+          323
+        ]
+      ],
+      "sample_count": 1920,
+      "held_out_subject_count": 8,
+      "test_subjects": [
+        1,
+        7,
+        11,
+        16,
+        25,
+        30,
+        42,
+        50
+      ]
+    },
+    "repeated_window_session_decision": {
+      "accuracy": 0.7239583333333334,
+      "macro_f1": 0.7160256870487814,
+      "balanced_accuracy": 0.7239583333333334,
+      "per_class_recall": {
+        "Neutral": 1.0,
+        "Pronation": 0.625,
+        "Supination": 0.546875
+      },
+      "confusion_matrix": [
+        [
+          64,
+          0,
+          0
+        ],
+        [
+          1,
+          40,
+          23
+        ],
+        [
+          8,
+          21,
+          35
+        ]
+      ],
+      "decision_count": 192,
+      "evaluation_kind": "held-out-participant repeated-window session decision",
+      "windows_per_decision": 10,
+      "held_out_subjects": [
+        1,
+        7,
+        11,
+        16,
+        25,
+        30,
+        42,
+        50
+      ]
+    },
+    "additional_real_human_dataset_trials": [
+      {
+        "dataset": "10-participant, 8-channel forearm sEMG with three electrode placements",
+        "dataset_url": "https://zenodo.org/records/4039550",
+        "paper_url": "https://arxiv.org/pdf/2005.02105",
+        "candidate_checkpoint": "artifacts\\models\\candidates\\kinesis_forearm_movement_augmented_cnn_v2.pt",
+        "candidate_checkpoint_sha256": "974ba9f0ce79e980e7154881e31ba7d2d26b64887172304ef844b35abb4d08f1",
+        "original_holdout_metrics": {
+          "accuracy": 0.6630208333333333,
+          "macro_f1": 0.6485180503103752,
+          "balanced_accuracy": 0.6630208333333333,
+          "per_class_recall": {
+            "Neutral": 0.940625,
+            "Pronation": 0.646875,
+            "Supination": 0.4015625
+          },
+          "confusion_matrix": [
+            [
+              602,
+              5,
+              33
+            ],
+            [
+              29,
+              414,
+              197
+            ],
+            [
+              138,
+              245,
+              257
+            ]
+          ],
+          "sample_count": 1920,
+          "held_out_subjects": [
+            1,
+            7,
+            11,
+            16,
+            25,
+            30,
+            42,
+            50
+          ]
+        },
+        "added_dataset_holdout_metrics": {
+          "accuracy": 0.49322916666666666,
+          "macro_f1": 0.3524137610534839,
+          "balanced_accuracy": 0.378125,
+          "per_class_recall": {
+            "Neutral": 0.8385416666666666,
+            "Pronation": 0.19375,
+            "Supination": 0.10208333333333333
+          },
+          "confusion_matrix": [
+            [
+              805,
+              95,
+              60
+            ],
+            [
+              329,
+              93,
+              58
+            ],
+            [
+              322,
+              109,
+              49
+            ]
+          ],
+          "sample_count": 1920,
+          "held_out_subjects": [
+            7,
+            9
+          ]
+        },
+        "decision": "rejected_not_better_than_current_model"
+      },
+      {
+        "dataset": "40-participant, 4-channel forearm sEMG gesture dataset",
+        "dataset_url": "https://data.mendeley.com/datasets/ckwc76xr2z/2",
+        "paper_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8844426/",
+        "candidate_checkpoint": "artifacts\\models\\candidates\\kinesis_forearm_movement_ckwc76xr2z_cnn_v1.pt",
+        "candidate_checkpoint_sha256": "66333f88097e00ae15b428cf6969cb8bb48a87d4998eda9eaf4cb80e43fbcb06",
+        "held_out_metrics": {
+          "accuracy": 0.44537037037037036,
+          "macro_f1": 0.40058382899924966,
+          "balanced_accuracy": 0.44537037037037036,
+          "per_class_recall": {
+            "Neutral": 0.8222222222222222,
+            "Pronation": 0.37222222222222223,
+            "Supination": 0.14166666666666666
+          },
+          "confusion_matrix": [
+            [
+              296,
+              41,
+              23
+            ],
+            [
+              189,
+              134,
+              37
+            ],
+            [
+              219,
+              90,
+              51
+            ]
+          ],
+          "sample_count": 1080,
+          "held_out_subjects": [
+            1,
+            3,
+            8,
+            15,
+            23,
+            35
+          ],
+          "held_out_subject_count": 6,
+          "evaluation_kind": "participant-held-out-single-electrode-windows"
+        },
+        "decision": "rejected_insufficient_single_channel_generalisation"
+      }
+    ],
+    "deployment_status": "current_checkpoint_unchanged"
+  },
+  "forearm_fatigue": {
+    "current_deployed_single_window": {
+      "accuracy": 0.7679924242424242,
+      "macro_f1": 0.766752283388042,
+      "roc_auc": 0.8135402318640955,
+      "per_class_recall": {
+        "Low-fatigue phase": 0.6950757575757576,
+        "Fatigue-like phase": 0.8409090909090909
+      },
+      "confusion_matrix": [
+        [
+          367,
+          161
+        ],
+        [
+          84,
+          444
+        ]
+      ],
+      "sample_count": 1056,
+      "held_out_subject_count": 3,
+      "test_subjects": [
+        9,
+        14,
+        15
+      ]
+    },
+    "sustained_window_session_decision": {
+      "accuracy": 0.8125,
+      "macro_f1": 0.8111888111888111,
+      "balanced_accuracy": 0.8125,
+      "per_class_recall": {
+        "Low-fatigue phase": 0.7291666666666666,
+        "Fatigue-like phase": 0.8958333333333334
+      },
+      "confusion_matrix": [
+        [
+          35,
+          13
+        ],
+        [
+          5,
+          43
+        ]
+      ],
+      "decision_count": 96,
+      "roc_auc": 0.8563368055555556,
+      "evaluation_kind": "held-out-participant sustained-window decision",
+      "windows_per_decision": 9,
+      "evidence_span_seconds": 12.8,
+      "held_out_subjects": [
+        9,
+        14,
+        15
+      ]
+    },
+    "deployment_status": "current_checkpoint_unchanged"
+  },
+  "quadriceps_movement": {
+    "current_deployed_zero_calibration": {
+      "accuracy": 0.41652892561983473,
+      "macro_f1": 0.39255562429801377
+    },
+    "repetition_candidate_zero_calibration": {
+      "accuracy": 0.55,
+      "macro_f1": 0.5323362651577123,
+      "balanced_accuracy": 0.5472557112342059,
+      "per_class_recall": {
+        "Correct extension": 0.24074074074074073,
+        "Incomplete extension": 0.6590909090909091,
+        "Compensatory leg lift": 0.7419354838709677
+      },
+      "confusion_matrix": [
+        [
+          13,
+          36,
+          5
+        ],
+        [
+          15,
+          29,
+          0
+        ],
+        [
+          6,
+          10,
+          46
+        ]
+      ],
+      "sample_count": 160,
+      "held_out_subject_count": 5,
+      "test_subjects": [
+        4,
+        6,
+        14,
+        17,
+        19
+      ]
+    },
+    "repetition_candidate_after_supervised_calibration": {
+      "accuracy": 0.8879310344827587,
+      "macro_f1": 0.8855866355866356,
+      "balanced_accuracy": 0.8950536461174758,
+      "per_class_recall": {
+        "Correct extension": 0.8461538461538461,
+        "Incomplete extension": 0.9666666666666667,
+        "Compensatory leg lift": 0.8723404255319149
+      },
+      "confusion_matrix": [
+        [
+          33,
+          6,
+          0
+        ],
+        [
+          1,
+          29,
+          0
+        ],
+        [
+          5,
+          1,
+          41
+        ]
+      ],
+      "sample_count": 116,
+      "evaluation_kind": "held-out-participant-after-supervised-calibration",
+      "calibration_repetitions_per_class": 3,
+      "held_out_subject_count": 5,
+      "test_subjects": [
+        4,
+        6,
+        14,
+        17,
+        19
+      ],
+      "subject_results": [
+        {
+          "accuracy": 0.88,
+          "macro_f1": 0.8773809523809524,
+          "balanced_accuracy": 0.8917748917748919,
+          "per_class_recall": {
+            "Correct extension": 0.8571428571428571,
+            "Incomplete extension": 1.0,
+            "Compensatory leg lift": 0.8181818181818182
+          },
+          "confusion_matrix": [
+            [
+              6,
+              1,
+              0
+            ],
+            [
+              0,
+              7,
+              0
+            ],
+            [
+              1,
+              1,
+              9
+            ]
+          ],
+          "sample_count": 25,
+          "subject": 4,
+          "calibration_sample_count": 9
+        },
+        {
+          "accuracy": 0.8461538461538461,
+          "macro_f1": 0.8468253968253968,
+          "balanced_accuracy": 0.8690476190476191,
+          "per_class_recall": {
+            "Correct extension": 0.8571428571428571,
+            "Incomplete extension": 1.0,
+            "Compensatory leg lift": 0.75
+          },
+          "confusion_matrix": [
+            [
+              6,
+              1,
+              0
+            ],
+            [
+              0,
+              7,
+              0
+            ],
+            [
+              3,
+              0,
+              9
+            ]
+          ],
+          "sample_count": 26,
+          "subject": 6,
+          "calibration_sample_count": 9
+        },
+        {
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "balanced_accuracy": 1.0,
+          "per_class_recall": {
+            "Correct extension": 1.0,
+            "Incomplete extension": 1.0,
+            "Compensatory leg lift": 1.0
+          },
+          "confusion_matrix": [
+            [
+              8,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              7
+            ]
+          ],
+          "sample_count": 16,
+          "subject": 14,
+          "calibration_sample_count": 8
+        },
+        {
+          "accuracy": 0.9230769230769231,
+          "macro_f1": 0.9212962962962963,
+          "balanced_accuracy": 0.9259259259259259,
+          "per_class_recall": {
+            "Correct extension": 0.7777777777777778,
+            "Incomplete extension": 1.0,
+            "Compensatory leg lift": 1.0
+          },
+          "confusion_matrix": [
+            [
+              7,
+              2,
+              0
+            ],
+            [
+              0,
+              8,
+              0
+            ],
+            [
+              0,
+              0,
+              9
+            ]
+          ],
+          "sample_count": 26,
+          "subject": 17,
+          "calibration_sample_count": 9
+        },
+        {
+          "accuracy": 0.8260869565217391,
+          "macro_f1": 0.8277777777777778,
+          "balanced_accuracy": 0.8273809523809524,
+          "per_class_recall": {
+            "Correct extension": 0.75,
+            "Incomplete extension": 0.8571428571428571,
+            "Compensatory leg lift": 0.875
+          },
+          "confusion_matrix": [
+            [
+              6,
+              2,
+              0
+            ],
+            [
+              1,
+              6,
+              0
+            ],
+            [
+              1,
+              0,
+              7
+            ]
+          ],
+          "sample_count": 23,
+          "subject": 19,
+          "calibration_sample_count": 9
+        }
+      ],
+      "zero_calibration_reference": {
+        "accuracy": 0.55,
+        "macro_f1": 0.5323362651577123,
+        "balanced_accuracy": 0.5472557112342059,
+        "per_class_recall": {
+          "Correct extension": 0.24074074074074073,
+          "Incomplete extension": 0.6590909090909091,
+          "Compensatory leg lift": 0.7419354838709677
+        },
+        "confusion_matrix": [
+          [
+            13,
+            36,
+            5
+          ],
+          [
+            15,
+            29,
+            0
+          ],
+          [
+            6,
+            10,
+            46
+          ]
+        ],
+        "sample_count": 160,
+        "held_out_subject_count": 5,
+        "test_subjects": [
+          4,
+          6,
+          14,
+          17,
+          19
+        ]
+      }
+    },
+    "candidate_checkpoint": "artifacts\\models\\candidates\\kinesis_quadriceps_movement_repetition_signed_cnn_v2.pt",
+    "candidate_checkpoint_sha256": "53375e1842b91d579c644665fd33b959cb9f44f1282526e45ae1714748723121",
+    "deployment_status": "candidate_not_connected_to_live_dashboard",
+    "required_before_deployment": [
+      "Add a guided fitting workflow with three physiotherapist-labelled repetitions per class.",
+      "Make the live IMU input match the six-axis training input or retrain on quaternion-derived motion.",
+      "Validate on recordings collected with the final KINESIS hardware."
+    ]
+  },
+  "quadriceps_fatigue": {
+    "current_deployed": {
+      "accuracy": 0.5945945945945946,
+      "macro_f1": 0.5578472160750642,
+      "roc_auc": 0.5432783115709945
+    },
+    "feature_sequence_candidate": {
+      "accuracy": 0.8372093023255814,
+      "macro_f1": 0.8360169491525424,
+      "balanced_accuracy": 0.8372093023255813,
+      "roc_auc": 0.942671714440238,
+      "per_class_recall": {
+        "Low-fatigue phase": 0.751937984496124,
+        "Fatigue-like phase": 0.9224806201550387
+      },
+      "confusion_matrix": [
+        [
+          97,
+          32
+        ],
+        [
+          10,
+          119
+        ]
+      ],
+      "sample_count": 258,
+      "held_out_subject_count": 5,
+      "test_subjects": [
+        "S04",
+        "S06",
+        "S15",
+        "S20",
+        "S34"
+      ]
+    },
+    "label_kind": "early-versus-late-protocol-phase-proxy",
+    "candidate_checkpoint": "artifacts\\models\\candidates\\kinesis_quadriceps_fatigue_feature_cnn_v2.pt",
+    "candidate_checkpoint_sha256": "bd404abbdeed17bf1b373dc379b785e2c7ffdcef36d2f22afc162f32ca48facb",
+    "deployment_status": "candidate_not_connected_to_live_dashboard",
+    "required_before_deployment": [
+      "Implement the same five live features and 64-cycle history used during training.",
+      "Validate the protocol-phase proxy on final KINESIS rehabilitation sessions.",
+      "Keep the output described as a fatigue-like pattern, not fatigue severity or diagnosis."
+    ]
+  },
+  "reporting_rule": "Never replace current dashboard metrics with candidate metrics unless the matching preprocessing and checkpoint are deployed and re-tested."
+}

@@ -1,0 +1,208 @@
+{
+  "evaluation_type": "held-out participant test evaluation",
+  "unit_of_analysis": "CNN windows",
+  "models": [
+    {
+      "name": "Forearm movement",
+      "checkpoint": "kinesis_forearm_movement_cnn.pt",
+      "checkpoint_sha256": "9f202027ac3654df8da1e8ef73006392487e7fa86b979d303e3eb4bce775a3c6",
+      "model_version": "forearm-movement-real-v1",
+      "muscle_group": "Forearm",
+      "classes": [
+        "Neutral",
+        "Pronation",
+        "Supination"
+      ],
+      "accuracy": 0.6583333333333333,
+      "macro_f1": 0.6483249223611952,
+      "balanced_accuracy": 0.6583333333333333,
+      "roc_auc": null,
+      "specificity": null,
+      "per_class_recall": {
+        "Neutral": 0.9484375,
+        "Pronation": 0.521875,
+        "Supination": 0.5046875
+      },
+      "confusion_matrix": [
+        [
+          607,
+          0,
+          33
+        ],
+        [
+          33,
+          334,
+          273
+        ],
+        [
+          134,
+          183,
+          323
+        ]
+      ],
+      "test_window_count": 1920,
+      "held_out_subject_count": 8,
+      "test_subjects": [
+        1,
+        7,
+        11,
+        16,
+        25,
+        30,
+        42,
+        50
+      ],
+      "temperature_scaling": 0.9794320464134216,
+      "source_dataset": "Multi-Channel Electromyography Signal Acquisition of Forearm",
+      "source_url": "https://data.mendeley.com/datasets/p77jn92bzg/1",
+      "validated_on_kinesis_data": false
+    },
+    {
+      "name": "Forearm fatigue",
+      "checkpoint": "kinesis_forearm_fatigue_cnn.pt",
+      "checkpoint_sha256": "fdb038cd0087b0631c56f6e0a884ba8ff660cb74fc13cda1a6cd6ad4f066ab73",
+      "model_version": "upper-limb-fatigue-phase-real-v1",
+      "muscle_group": "Upper limb",
+      "classes": [
+        "Low-fatigue phase",
+        "Fatigue-like phase"
+      ],
+      "accuracy": 0.7679924242424242,
+      "macro_f1": 0.766752283388042,
+      "balanced_accuracy": 0.7679924242424243,
+      "roc_auc": 0.8135402318640955,
+      "specificity": 0.6950757575757576,
+      "per_class_recall": {
+        "Low-fatigue phase": 0.6950757575757576,
+        "Fatigue-like phase": 0.8409090909090909
+      },
+      "confusion_matrix": [
+        [
+          367,
+          161
+        ],
+        [
+          84,
+          444
+        ]
+      ],
+      "test_window_count": 1056,
+      "held_out_subject_count": 3,
+      "test_subjects": [
+        9,
+        14,
+        15
+      ],
+      "temperature_scaling": 0.8589813113212585,
+      "source_dataset": "Multi-channel Surface EMG Dataset for Fatigue analysis",
+      "source_url": "https://zenodo.org/records/5189275",
+      "validated_on_kinesis_data": false
+    },
+    {
+      "name": "Quadriceps movement",
+      "checkpoint": "kinesis_quadriceps_movement_cnn.pt",
+      "checkpoint_sha256": "95460b4d0989d8bba484aacf4aa26991dd0cd3511f9c6ef7240262cbdeba2ec3",
+      "model_version": "quadriceps-extension-real-v1",
+      "muscle_group": "Quadriceps",
+      "classes": [
+        "Correct extension",
+        "Incomplete extension",
+        "Compensatory leg lift"
+      ],
+      "accuracy": 0.41652892561983473,
+      "macro_f1": 0.39255562429801377,
+      "balanced_accuracy": 0.39279369386832075,
+      "roc_auc": null,
+      "specificity": null,
+      "per_class_recall": {
+        "Correct extension": 0.373134328358209,
+        "Incomplete extension": 0.2532467532467532,
+        "Compensatory leg lift": 0.552
+      },
+      "confusion_matrix": [
+        [
+          75,
+          68,
+          58
+        ],
+        [
+          59,
+          39,
+          56
+        ],
+        [
+          69,
+          43,
+          138
+        ]
+      ],
+      "test_window_count": 605,
+      "held_out_subject_count": 5,
+      "test_subjects": [
+        4,
+        6,
+        14,
+        17,
+        19
+      ],
+      "temperature_scaling": 0.9074251651763916,
+      "source_dataset": "KneE-PAD",
+      "source_url": "https://zenodo.org/records/12112951",
+      "validated_on_kinesis_data": false
+    },
+    {
+      "name": "Quadriceps fatigue",
+      "checkpoint": "kinesis_quadriceps_fatigue_cnn.pt",
+      "checkpoint_sha256": "4c2c34c5bd072c9d41c21c6a2dc151401ee885d7b39b2b989ea676d93de5db19",
+      "model_version": "quadriceps-fatigue-phase-real-v1",
+      "muscle_group": "Quadriceps",
+      "classes": [
+        "Low-fatigue phase",
+        "Fatigue-like phase"
+      ],
+      "accuracy": 0.5945945945945946,
+      "macro_f1": 0.5578472160750642,
+      "balanced_accuracy": 0.5700911554570092,
+      "roc_auc": 0.5432783115709945,
+      "specificity": 0.3434343434343434,
+      "per_class_recall": {
+        "Low-fatigue phase": 0.3434343434343434,
+        "Fatigue-like phase": 0.7967479674796748
+      },
+      "confusion_matrix": [
+        [
+          136,
+          260
+        ],
+        [
+          100,
+          392
+        ]
+      ],
+      "test_window_count": 888,
+      "held_out_subject_count": 1,
+      "test_subjects": [
+        3
+      ],
+      "temperature_scaling": 1.0,
+      "source_dataset": "Muscle Fatigue in Cyclist",
+      "source_url": "https://huggingface.co/datasets/YominE/Muscle_Fatigue_Cycling",
+      "validated_on_kinesis_data": false
+    }
+  ],
+  "important_limitations": [
+    "These are held-out public-dataset results, not KINESIS patient accuracy.",
+    "Multiple windows may come from each held-out participant.",
+    "The checkpoints have not been validated on recordings from the final KINESIS device placement.",
+    "Accuracy alone is insufficient; macro F1, per-class recall, ROC AUC where applicable, and the confusion matrix must also be reported."
+  ],
+  "checkpoint_verification": {
+    "method": "SHA-256",
+    "verified": [
+      "kinesis_forearm_movement_cnn.pt",
+      "kinesis_forearm_fatigue_cnn.pt",
+      "kinesis_quadriceps_movement_cnn.pt",
+      "kinesis_quadriceps_fatigue_cnn.pt"
+    ]
+  }
+}

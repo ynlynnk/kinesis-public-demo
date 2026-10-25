@@ -1,0 +1,5 @@
+name,model_version,accuracy_percent,macro_f1_percent,balanced_accuracy_percent,roc_auc_percent,test_window_count,held_out_subject_count,validated_on_kinesis_data
+Forearm movement,forearm-movement-real-v1,65.83,64.83,65.83,,1920,8,False
+Forearm fatigue,upper-limb-fatigue-phase-real-v1,76.8,76.68,76.8,81.35,1056,3,False
+Quadriceps movement,quadriceps-extension-real-v1,41.65,39.26,39.28,,605,5,False
+Quadriceps fatigue,quadriceps-fatigue-phase-real-v1,59.46,55.78,57.01,54.33,888,1,False

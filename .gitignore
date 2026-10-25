@@ -1,0 +1,29 @@
+# API keys and credentials
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*service-account*.json
+*firebase-adminsdk*.json
+*.pem
+*.key
+
+# Python environments and cache files
+.venv/
+venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local development and deployment files
+.vscode/
+.gcloud-temp/
+*.log
+
+# Raw datasets are too large for GitHub
+data/raw/
+
+# Operating-system files
+.DS_Store
+Thumbs.db

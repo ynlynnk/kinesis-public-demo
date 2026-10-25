@@ -1,0 +1,1831 @@
+{
+  "summary_context": {
+    "workflow_instructions": "---\nname: kinesis-session-analysis\ndescription: Automatically analyse a selected KINESIS rehabilitation session for a physiotherapist using authorised MCP data, historical trends, review records, and optional general knowledge.\n---\n\n# KINESIS Session Analysis\n\n## Purpose\n\nCreate a clear, physiotherapist-friendly summary whenever a physiotherapist opens a patient's rehabilitation session.\n\nThis workflow replaces the previous question-and-answer approach. The physiotherapist should not need to ask the system what to analyse.\n\nUse synthetic KINESIS demonstration data only.\n\n## Required input\n\nThe workflow must receive:\n\n- `patient_id`\n- `session_id`\n- `requesting_role`\n\nThe full workflow is available only when `requesting_role` is `physiotherapist`.\n\nNever expose full session evidence, review history, or physiotherapist comments to a patient or unauthorised role.\n\n## Workflow\n\nFollow these steps in order.\n\n### 1. Validate access and session selection\n\nCall:\n\n`list_available_sessions(requesting_role=\"physiotherapist\")`\n\nConfirm that the selected `patient_id` and `session_id` exist in the authorised results.\n\nStop if:\n\n- the patient or session is not found;\n- the identifiers do not match;\n- the requesting role is not authorised; or\n- the session cannot be accessed.\n\nExplain the problem without guessing or exposing other patient records.\n\n### 2. Retrieve the original AI findings\n\nCall:\n\n`get_model1_outputs(patient_id, session_id, requesting_role=\"physiotherapist\")`\n\nKeep the original Model 1 output separate from the physiotherapist's review.\n\nExtract, when available:\n\n- fatigue result;\n- fatigue probability;\n- estimated fatigue onset;\n- movement result; and\n- movement confidence.\n\nDo not alter the original model result.\n\n### 3. Retrieve historical trends\n\nCall:\n\n`compare_session_trends(patient_id, requesting_role=\"physiotherapist\")`\n\nCompare the selected session with previous authorised sessions.\n\nDescribe changes in plain language. Clearly state when there are not enough previous sessions for a meaningful comparison.\n\n### 4. Retrieve visualisation data\n\nCall:\n\n`get_session_visualisation(patient_id, session_id, requesting_role=\"physiotherapist\")`\n\nUse the returned data to support session charts or graphs.\n\nDo not invent missing measurements.\n\n### 5. Retrieve the human-review status\n\nCall:\n\n`get_feedback_status(patient_id, session_id, requesting_role=\"physiotherapist\")`\n\nIf `get_review_history` is available, also call:\n\n`get_review_history(requesting_role=\"physiotherapist\")`\n\nFilter the returned history to the selected patient and session.\n\nShow the following when available:\n\n- original AI fatigue result;\n- physiotherapist's fatigue decision;\n- original AI movement result;\n- physiotherapist's movement decision;\n- final reviewed labels;\n- reviewer ID;\n- review time;\n- review comments;\n- review ID; and\n- whether future AI-improvement use was allowed.\n\nIf detailed history is unavailable, show only the confirmed status and explain that the complete review record could not be retrieved.\n\nDo not say that a review has retrained or immediately changed the AI model.\n\n### 6. Add optional general knowledge\n\nIf an approved KINESIS `knowledge/` collection and the knowledge-base retriever are available, retrieve only information relevant to explaining the session findings.\n\nGeneral knowledge may help explain:\n\n- muscle fatigue;\n- surface EMG;\n- movement analysis;\n- kinematic measurements;\n- movement asymmetry; and\n- rehabilitation monitoring.\n\nKeep general knowledge separate from patient-specific evidence.\n\nCite the source document used. General knowledge must never override the Model 1 result or the physiotherapist's decision.\n\nIf knowledge retrieval is unavailable, continue using the MCP session data and state that no additional general explanation was added.\n\n### 7. Generate the session summary\n\nPresent the result using the following structure.\n\n## Session identification\n\nShow the patient ID and session ID.\n\n## Fatigue assessment\n\nShow:\n\n- the AI result in plain language;\n- fatigue probability;\n- estimated fatigue onset, when detected; and\n- the physiotherapist's reviewed decision, when available.\n\nClearly distinguish between the AI result and human review.\n\n## Movement assessment\n\nShow:\n\n- the AI movement result in plain language;\n- movement confidence; and\n- the physiotherapist's reviewed decision, when available.\n\nClearly distinguish between the AI result and human review.\n\n## Changes across sessions\n\nSummarise important changes compared with previous sessions.\n\nAvoid claiming that a numerical change is a clinical improvement or deterioration unless that conclusion is supported by the available evidence.\n\n## Physiotherapist review\n\nShow the review status, reviewer, review date, final decisions, and comments when available.\n\n## General explanation\n\nProvide a short, non-patient-specific explanation from the approved knowledge base when available.\n\n## Important limitations\n\nAlways state:\n\n- the current data is synthetic;\n- the output is for demonstration and system testing;\n- the output is not a medical diagnosis; and\n- final interpretation remains with the physiotherapist.\n\n## Writing style\n\nUse short sentences and familiar language.\n\nPrefer:\n\n- ôNo fatigue was detectedö\n- ôFatigue was detectedö\n- ôThe movement was classified as correctö\n- ôThe movement may need correctionö\n- ôThe physiotherapist agreed with the AI resultö\n- ôThe physiotherapist changed the AI resultö\n\nAvoid placing internal tool names, filenames, model filenames, database paths, or MCP implementation details in the main summary.\n\nTechnical information may appear only in a separate optional technical-details section.\n\n## Safety and data rules\n\n- Use synthetic patient data only.\n- Never request or process real patient-identifying information.\n- Never expose one patient's data while analysing another patient.\n- Never invent missing results, measurements, reviews, or comments.\n- Never provide a diagnosis.\n- Never prescribe or change a rehabilitation plan.\n- Never change Model 1 output automatically.\n- Never call `record_review_decision` during automatic analysis.\n- Call `record_review_decision` only after the physiotherapist explicitly submits a review through the review interface.\n- Treat knowledge-base content as general explanatory information, not patient-specific evidence.\n- Report tool failures and missing data honestly.",
+    "request": {
+      "patient_id": "P001",
+      "session_id": "S001",
+      "requesting_role": "physiotherapist"
+    },
+    "original_ai_findings": {
+      "patient_id": "P001",
+      "session_id": "S001",
+      "model_name": "KINESIS dual-branch 1D CNN",
+      "model_version": "model1-cnn-v2-synthetic-onset",
+      "generated_at": "2026-09-10T06:27:52.939801+00:00",
+      "prediction": {
+        "fatigue_flag": false,
+        "fatigue_score": 0.0001,
+        "fatigue_onset_seconds": null,
+        "movement_quality": "correct",
+        "movement_confidence": 0.9998,
+        "movement_incorrect_score": 0.0002
+      },
+      "window_predictions": [
+        {
+          "window_index": 0,
+          "start_seconds": 0.0,
+          "end_seconds": 1.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 1,
+          "start_seconds": 0.5,
+          "end_seconds": 1.5,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 2,
+          "start_seconds": 1.0,
+          "end_seconds": 2.0,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 3,
+          "start_seconds": 1.5,
+          "end_seconds": 2.5,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 4,
+          "start_seconds": 2.0,
+          "end_seconds": 3.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 5,
+          "start_seconds": 2.5,
+          "end_seconds": 3.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 6,
+          "start_seconds": 3.0,
+          "end_seconds": 4.0,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0003
+        },
+        {
+          "window_index": 7,
+          "start_seconds": 3.5,
+          "end_seconds": 4.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 8,
+          "start_seconds": 4.0,
+          "end_seconds": 5.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 9,
+          "start_seconds": 4.5,
+          "end_seconds": 5.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 10,
+          "start_seconds": 5.0,
+          "end_seconds": 6.0,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 11,
+          "start_seconds": 5.5,
+          "end_seconds": 6.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 12,
+          "start_seconds": 6.0,
+          "end_seconds": 7.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 13,
+          "start_seconds": 6.5,
+          "end_seconds": 7.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 14,
+          "start_seconds": 7.0,
+          "end_seconds": 8.0,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0002
+        },
+        {
+          "window_index": 15,
+          "start_seconds": 7.5,
+          "end_seconds": 8.5,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 16,
+          "start_seconds": 8.0,
+          "end_seconds": 9.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 17,
+          "start_seconds": 8.5,
+          "end_seconds": 9.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 18,
+          "start_seconds": 9.0,
+          "end_seconds": 10.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0002
+        }
+      ],
+      "supporting_measurements": {
+        "number_of_windows": 19,
+        "window_seconds": 1.0,
+        "window_overlap": 0.5,
+        "emg_sampling_rate_hz": 1000,
+        "imu_sampling_rate_hz": 100
+      },
+      "provenance": {
+        "model_file": "artifacts/models/kinesis_cnn.pt",
+        "dataset_file": "data/processed/windowed_dataset.npz"
+      },
+      "limitations": [
+        "The current input data is synthetic.",
+        "This output is for system testing only.",
+        "This output is not a clinical diagnosis.",
+        "Final interpretation remains with the physiotherapist."
+      ],
+      "review_status": "Model findings confirmed by physiotherapist"
+    },
+    "historical_session_comparison": {
+      "patient_id": "P001",
+      "sessions": [
+        {
+          "session_id": "S001",
+          "fatigue_score": 0.0001,
+          "movement_confidence": 0.9998,
+          "movement_quality": "correct",
+          "fatigue_onset_seconds": null,
+          "review_status": "Model findings confirmed by physiotherapist"
+        },
+        {
+          "session_id": "S002",
+          "fatigue_score": 0.0025,
+          "movement_confidence": 0.9989,
+          "movement_quality": "incorrect",
+          "fatigue_onset_seconds": null,
+          "review_status": "Awaiting physiotherapist review"
+        },
+        {
+          "session_id": "S003",
+          "fatigue_score": 0.9886,
+          "movement_confidence": 0.9946,
+          "movement_quality": "correct",
+          "fatigue_onset_seconds": 5.5,
+          "review_status": "Awaiting physiotherapist review"
+        }
+      ],
+      "interpretation_note": "Model scores are experimental indicators on synthetic data. Changes between sessions require professional interpretation."
+    },
+    "physiotherapist_review_status": {
+      "patient_id": "P001",
+      "session_id": "S001",
+      "review_saved": true,
+      "review_status": "Model findings confirmed by physiotherapist",
+      "include_for_retraining": true,
+      "review_id": "R-20260910T080717-1602c25d",
+      "reviewed_at": "2026-09-10T08:07:17.258783+00:00",
+      "active_model_version": "model1-cnn-v2-synthetic-onset"
+    },
+    "physiotherapist_review_history": [
+      {
+        "review_id": "R-20260910T080717-1602c25d",
+        "patient_id": "P001",
+        "session_id": "S001",
+        "reviewer_id": "PT001",
+        "ai_fatigue_label": "non_fatigued",
+        "fatigue_decision": "confirmed",
+        "final_fatigue_label": "non_fatigued",
+        "ai_movement_label": "correct",
+        "movement_decision": "confirmed",
+        "final_movement_label": "correct",
+        "include_for_retraining": true,
+        "note": "",
+        "reviewed_at": "2026-09-10T08:07:17.258783+00:00",
+        "model_version": "model1-cnn-v2-synthetic-onset",
+        "is_latest": true
+      },
+      {
+        "review_id": "R-20260910T072405-016ecc8a",
+        "patient_id": "P001",
+        "session_id": "S001",
+        "reviewer_id": "PT001",
+        "ai_fatigue_label": "non_fatigued",
+        "fatigue_decision": "confirmed",
+        "final_fatigue_label": "non_fatigued",
+        "ai_movement_label": "correct",
+        "movement_decision": "confirmed",
+        "final_movement_label": "correct",
+        "include_for_retraining": false,
+        "note": "repeat physiotherapy",
+        "reviewed_at": "2026-09-10T07:24:05.166313+00:00",
+        "model_version": "model1-cnn-v2-synthetic-onset",
+        "is_latest": false
+      }
+    ],
+    "review_history_note": null,
+    "visualisation_summary": {
+      "window_predictions": [
+        {
+          "window_index": 0,
+          "start_seconds": 0.0,
+          "end_seconds": 1.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 1,
+          "start_seconds": 0.5,
+          "end_seconds": 1.5,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 2,
+          "start_seconds": 1.0,
+          "end_seconds": 2.0,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 3,
+          "start_seconds": 1.5,
+          "end_seconds": 2.5,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 4,
+          "start_seconds": 2.0,
+          "end_seconds": 3.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 5,
+          "start_seconds": 2.5,
+          "end_seconds": 3.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 6,
+          "start_seconds": 3.0,
+          "end_seconds": 4.0,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0003
+        },
+        {
+          "window_index": 7,
+          "start_seconds": 3.5,
+          "end_seconds": 4.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 8,
+          "start_seconds": 4.0,
+          "end_seconds": 5.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 9,
+          "start_seconds": 4.5,
+          "end_seconds": 5.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 10,
+          "start_seconds": 5.0,
+          "end_seconds": 6.0,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 11,
+          "start_seconds": 5.5,
+          "end_seconds": 6.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 12,
+          "start_seconds": 6.0,
+          "end_seconds": 7.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 13,
+          "start_seconds": 6.5,
+          "end_seconds": 7.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 14,
+          "start_seconds": 7.0,
+          "end_seconds": 8.0,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0002
+        },
+        {
+          "window_index": 15,
+          "start_seconds": 7.5,
+          "end_seconds": 8.5,
+          "fatigue_probability": 0.0001,
+          "movement_incorrect_probability": 0.0001
+        },
+        {
+          "window_index": 16,
+          "start_seconds": 8.0,
+          "end_seconds": 9.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 17,
+          "start_seconds": 8.5,
+          "end_seconds": 9.5,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0
+        },
+        {
+          "window_index": 18,
+          "start_seconds": 9.0,
+          "end_seconds": 10.0,
+          "fatigue_probability": 0.0,
+          "movement_incorrect_probability": 0.0002
+        }
+      ],
+      "signal_point_count": 250,
+      "data_note": "Signals are independently normalised for visual comparison; their amplitudes are not directly comparable."
+    },
+    "general_knowledge": [
+      {
+        "source": "knowledge/fatigue/fatigue_indicators.md",
+        "document_title": "Interpreting fatigue indicators",
+        "section_title": "Fatigue result",
+        "relevance_score": 0.2606,
+        "text": "The fatigue result has two possible labels:\n\n- `non_fatigued`: the model did not find a sustained fatigue pattern;\n- `fatigued`: the model found a sustained fatigue pattern.\n\nDisplay these labels as:\n\n- \"No fatigue pattern detected\"\n- \"Fatigue pattern detected\"\n\nDo not present the result as a medical diagnosis."
+      },
+      {
+        "source": "knowledge/fatigue/fatigue_indicators.md",
+        "document_title": "Interpreting fatigue indicators",
+        "section_title": "Estimated fatigue onset",
+        "relevance_score": 0.1983,
+        "text": "If a sustained fatigue pattern is detected, KINESIS reports the beginning of the first group of consecutive time windows that passed the model's fatigue threshold.\n\nExplain it as:\n\n\"The model first detected a sustained fatigue pattern at approximately [time] seconds.\"\n\nThe reported time is an estimate based on analysis windows. It is not the exact physiological moment when fatigue began.\n\nIf no onset is available, display:\n\n\"No sustained fatigue onset was detected.\""
+      },
+      {
+        "source": "knowledge/imu/movement_analysis.md",
+        "document_title": "Understanding IMU movement analysis",
+        "section_title": "KINESIS movement classification",
+        "relevance_score": 0.157,
+        "text": "Model 1 produces:\n\n- a movement result;\n- a movement-confidence score; and\n- window-level probabilities for an incorrect movement pattern.\n\nThe movement result has two internal labels:\n\n- `correct`\n- `incorrect`\n\nDisplay these as:\n\n- \"Movement matched the learned pattern\"\n- \"Movement may need correction\"\n\nAvoid presenting `correct` as proof of perfect exercise technique.\n\nAvoid presenting `incorrect` as a diagnosis or definite clinical error. The result means that the model detected a pattern associated with the synthetic incorrect examples used during training."
+      },
+      {
+        "source": "knowledge/fatigue/fatigue_indicators.md",
+        "document_title": "Interpreting fatigue indicators",
+        "section_title": "Safe summary examples",
+        "relevance_score": 0.1453,
+        "text": "Use:\n\n- \"The model did not detect a sustained fatigue pattern.\"\n- \"The model detected a sustained fatigue pattern.\"\n- \"The fatigue-pattern score was 72%.\"\n- \"The model first detected the pattern at approximately 18 seconds.\"\n- \"The physiotherapist changed the model's fatigue result.\"\n- \"More information is required before confirming this result.\"\n\nAvoid:\n\n- \"The patient is 72% fatigued.\"\n- \"The patient definitely developed fatigue at 18 seconds.\"\n- \"The result proves that the patient has recovered.\"\n- \"The rehabilitation programme must be changed.\""
+      },
+      {
+        "source": "knowledge/imu/movement_analysis.md",
+        "document_title": "Understanding IMU movement analysis",
+        "section_title": "Safe explanation examples",
+        "relevance_score": 0.1388,
+        "text": "Use:\n\n- \"The model found a movement pattern that may need correction.\"\n- \"The model found that the movement matched its learned pattern.\"\n- \"The movement-confidence score describes confidence in the AI classification.\"\n- \"An isolated change appeared during this part of the session.\"\n- \"Sensor placement and exercise conditions should be considered.\"\n- \"The physiotherapist changed the movement classification after review.\"\n\nAvoid:\n\n- \"The patient performed 90% of the exercise correctly.\"\n- \"This graph provides the exact joint angle.\"\n- \"The patient has an abnormal movement disorder.\"\n- \"The movement will cause an injury.\"\n- \"This session proves that rehabilitation is improving.\""
+      }
+    ],
+    "generation_requirements": [
+      "Separate AI findings from physiotherapist review.",
+      "Use plain and non-diagnostic language.",
+      "Do not invent missing measurements.",
+      "Do not recommend treatment changes.",
+      "State that the data is synthetic.",
+      "Cite each knowledge document that is used."
+    ]
+  },
+  "visualisation_data": {
+    "patient_id": "P001",
+    "session_id": "S001",
+    "window_predictions": [
+      {
+        "window_index": 0,
+        "start_seconds": 0.0,
+        "end_seconds": 1.0,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0
+      },
+      {
+        "window_index": 1,
+        "start_seconds": 0.5,
+        "end_seconds": 1.5,
+        "fatigue_probability": 0.0001,
+        "movement_incorrect_probability": 0.0001
+      },
+      {
+        "window_index": 2,
+        "start_seconds": 1.0,
+        "end_seconds": 2.0,
+        "fatigue_probability": 0.0001,
+        "movement_incorrect_probability": 0.0001
+      },
+      {
+        "window_index": 3,
+        "start_seconds": 1.5,
+        "end_seconds": 2.5,
+        "fatigue_probability": 0.0001,
+        "movement_incorrect_probability": 0.0001
+      },
+      {
+        "window_index": 4,
+        "start_seconds": 2.0,
+        "end_seconds": 3.0,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0
+      },
+      {
+        "window_index": 5,
+        "start_seconds": 2.5,
+        "end_seconds": 3.5,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0
+      },
+      {
+        "window_index": 6,
+        "start_seconds": 3.0,
+        "end_seconds": 4.0,
+        "fatigue_probability": 0.0001,
+        "movement_incorrect_probability": 0.0003
+      },
+      {
+        "window_index": 7,
+        "start_seconds": 3.5,
+        "end_seconds": 4.5,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0001
+      },
+      {
+        "window_index": 8,
+        "start_seconds": 4.0,
+        "end_seconds": 5.0,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0
+      },
+      {
+        "window_index": 9,
+        "start_seconds": 4.5,
+        "end_seconds": 5.5,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0
+      },
+      {
+        "window_index": 10,
+        "start_seconds": 5.0,
+        "end_seconds": 6.0,
+        "fatigue_probability": 0.0001,
+        "movement_incorrect_probability": 0.0001
+      },
+      {
+        "window_index": 11,
+        "start_seconds": 5.5,
+        "end_seconds": 6.5,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0001
+      },
+      {
+        "window_index": 12,
+        "start_seconds": 6.0,
+        "end_seconds": 7.0,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0
+      },
+      {
+        "window_index": 13,
+        "start_seconds": 6.5,
+        "end_seconds": 7.5,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0
+      },
+      {
+        "window_index": 14,
+        "start_seconds": 7.0,
+        "end_seconds": 8.0,
+        "fatigue_probability": 0.0001,
+        "movement_incorrect_probability": 0.0002
+      },
+      {
+        "window_index": 15,
+        "start_seconds": 7.5,
+        "end_seconds": 8.5,
+        "fatigue_probability": 0.0001,
+        "movement_incorrect_probability": 0.0001
+      },
+      {
+        "window_index": 16,
+        "start_seconds": 8.0,
+        "end_seconds": 9.0,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0
+      },
+      {
+        "window_index": 17,
+        "start_seconds": 8.5,
+        "end_seconds": 9.5,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0
+      },
+      {
+        "window_index": 18,
+        "start_seconds": 9.0,
+        "end_seconds": 10.0,
+        "fatigue_probability": 0.0,
+        "movement_incorrect_probability": 0.0002
+      }
+    ],
+    "signal_overlay": [
+      {
+        "time_seconds": 0.0,
+        "emg_activation_normalised": 0.0,
+        "imu_movement_normalised": 1.0
+      },
+      {
+        "time_seconds": 0.04,
+        "emg_activation_normalised": 0.606,
+        "imu_movement_normalised": 0.894
+      },
+      {
+        "time_seconds": 0.08,
+        "emg_activation_normalised": 0.9852,
+        "imu_movement_normalised": 0.8746
+      },
+      {
+        "time_seconds": 0.12,
+        "emg_activation_normalised": 1.0,
+        "imu_movement_normalised": 0.9055
+      },
+      {
+        "time_seconds": 0.16,
+        "emg_activation_normalised": 0.897,
+        "imu_movement_normalised": 0.7494
+      },
+      {
+        "time_seconds": 0.2,
+        "emg_activation_normalised": 0.8404,
+        "imu_movement_normalised": 0.7122
+      },
+      {
+        "time_seconds": 0.24,
+        "emg_activation_normalised": 0.8412,
+        "imu_movement_normalised": 0.6187
+      },
+      {
+        "time_seconds": 0.28,
+        "emg_activation_normalised": 0.8566,
+        "imu_movement_normalised": 0.5111
+      },
+      {
+        "time_seconds": 0.32,
+        "emg_activation_normalised": 0.8661,
+        "imu_movement_normalised": 0.4254
+      },
+      {
+        "time_seconds": 0.36,
+        "emg_activation_normalised": 0.8723,
+        "imu_movement_normalised": 0.2944
+      },
+      {
+        "time_seconds": 0.4,
+        "emg_activation_normalised": 0.8797,
+        "imu_movement_normalised": 0.1462
+      },
+      {
+        "time_seconds": 0.44,
+        "emg_activation_normalised": 0.8854,
+        "imu_movement_normalised": 0.143
+      },
+      {
+        "time_seconds": 0.48,
+        "emg_activation_normalised": 0.8864,
+        "imu_movement_normalised": 0.0612
+      },
+      {
+        "time_seconds": 0.52,
+        "emg_activation_normalised": 0.8846,
+        "imu_movement_normalised": 0.0887
+      },
+      {
+        "time_seconds": 0.56,
+        "emg_activation_normalised": 0.8793,
+        "imu_movement_normalised": 0.1231
+      },
+      {
+        "time_seconds": 0.6,
+        "emg_activation_normalised": 0.8707,
+        "imu_movement_normalised": 0.2444
+      },
+      {
+        "time_seconds": 0.64,
+        "emg_activation_normalised": 0.867,
+        "imu_movement_normalised": 0.2562
+      },
+      {
+        "time_seconds": 0.68,
+        "emg_activation_normalised": 0.8751,
+        "imu_movement_normalised": 0.381
+      },
+      {
+        "time_seconds": 0.72,
+        "emg_activation_normalised": 0.8893,
+        "imu_movement_normalised": 0.5206
+      },
+      {
+        "time_seconds": 0.76,
+        "emg_activation_normalised": 0.8973,
+        "imu_movement_normalised": 0.5745
+      },
+      {
+        "time_seconds": 0.8,
+        "emg_activation_normalised": 0.8924,
+        "imu_movement_normalised": 0.631
+      },
+      {
+        "time_seconds": 0.84,
+        "emg_activation_normalised": 0.8786,
+        "imu_movement_normalised": 0.7515
+      },
+      {
+        "time_seconds": 0.88,
+        "emg_activation_normalised": 0.8684,
+        "imu_movement_normalised": 0.8432
+      },
+      {
+        "time_seconds": 0.92,
+        "emg_activation_normalised": 0.8715,
+        "imu_movement_normalised": 0.8509
+      },
+      {
+        "time_seconds": 0.96,
+        "emg_activation_normalised": 0.8834,
+        "imu_movement_normalised": 0.9502
+      },
+      {
+        "time_seconds": 1.0,
+        "emg_activation_normalised": 0.889,
+        "imu_movement_normalised": 0.9767
+      },
+      {
+        "time_seconds": 1.04,
+        "emg_activation_normalised": 0.8806,
+        "imu_movement_normalised": 0.9444
+      },
+      {
+        "time_seconds": 1.08,
+        "emg_activation_normalised": 0.867,
+        "imu_movement_normalised": 0.8776
+      },
+      {
+        "time_seconds": 1.12,
+        "emg_activation_normalised": 0.8614,
+        "imu_movement_normalised": 0.8405
+      },
+      {
+        "time_seconds": 1.16,
+        "emg_activation_normalised": 0.8648,
+        "imu_movement_normalised": 0.8063
+      },
+      {
+        "time_seconds": 1.2,
+        "emg_activation_normalised": 0.8698,
+        "imu_movement_normalised": 0.7408
+      },
+      {
+        "time_seconds": 1.24,
+        "emg_activation_normalised": 0.8715,
+        "imu_movement_normalised": 0.6023
+      },
+      {
+        "time_seconds": 1.28,
+        "emg_activation_normalised": 0.871,
+        "imu_movement_normalised": 0.4915
+      },
+      {
+        "time_seconds": 1.32,
+        "emg_activation_normalised": 0.8711,
+        "imu_movement_normalised": 0.4065
+      },
+      {
+        "time_seconds": 1.36,
+        "emg_activation_normalised": 0.8738,
+        "imu_movement_normalised": 0.2753
+      },
+      {
+        "time_seconds": 1.4,
+        "emg_activation_normalised": 0.8792,
+        "imu_movement_normalised": 0.185
+      },
+      {
+        "time_seconds": 1.44,
+        "emg_activation_normalised": 0.8836,
+        "imu_movement_normalised": 0.0859
+      },
+      {
+        "time_seconds": 1.48,
+        "emg_activation_normalised": 0.8833,
+        "imu_movement_normalised": 0.0797
+      },
+      {
+        "time_seconds": 1.52,
+        "emg_activation_normalised": 0.8788,
+        "imu_movement_normalised": 0.0904
+      },
+      {
+        "time_seconds": 1.56,
+        "emg_activation_normalised": 0.8739,
+        "imu_movement_normalised": 0.0529
+      },
+      {
+        "time_seconds": 1.6,
+        "emg_activation_normalised": 0.8707,
+        "imu_movement_normalised": 0.2134
+      },
+      {
+        "time_seconds": 1.64,
+        "emg_activation_normalised": 0.8689,
+        "imu_movement_normalised": 0.2694
+      },
+      {
+        "time_seconds": 1.68,
+        "emg_activation_normalised": 0.8669,
+        "imu_movement_normalised": 0.3803
+      },
+      {
+        "time_seconds": 1.72,
+        "emg_activation_normalised": 0.8644,
+        "imu_movement_normalised": 0.53
+      },
+      {
+        "time_seconds": 1.76,
+        "emg_activation_normalised": 0.8645,
+        "imu_movement_normalised": 0.5448
+      },
+      {
+        "time_seconds": 1.8,
+        "emg_activation_normalised": 0.8683,
+        "imu_movement_normalised": 0.6539
+      },
+      {
+        "time_seconds": 1.84,
+        "emg_activation_normalised": 0.8741,
+        "imu_movement_normalised": 0.7619
+      },
+      {
+        "time_seconds": 1.88,
+        "emg_activation_normalised": 0.8794,
+        "imu_movement_normalised": 0.8266
+      },
+      {
+        "time_seconds": 1.92,
+        "emg_activation_normalised": 0.8804,
+        "imu_movement_normalised": 0.8905
+      },
+      {
+        "time_seconds": 1.96,
+        "emg_activation_normalised": 0.8765,
+        "imu_movement_normalised": 0.8116
+      },
+      {
+        "time_seconds": 2.0,
+        "emg_activation_normalised": 0.8729,
+        "imu_movement_normalised": 0.9041
+      },
+      {
+        "time_seconds": 2.04,
+        "emg_activation_normalised": 0.8735,
+        "imu_movement_normalised": 0.9136
+      },
+      {
+        "time_seconds": 2.08,
+        "emg_activation_normalised": 0.8758,
+        "imu_movement_normalised": 0.8911
+      },
+      {
+        "time_seconds": 2.12,
+        "emg_activation_normalised": 0.8759,
+        "imu_movement_normalised": 0.8148
+      },
+      {
+        "time_seconds": 2.16,
+        "emg_activation_normalised": 0.8755,
+        "imu_movement_normalised": 0.7041
+      },
+      {
+        "time_seconds": 2.2,
+        "emg_activation_normalised": 0.878,
+        "imu_movement_normalised": 0.7054
+      },
+      {
+        "time_seconds": 2.24,
+        "emg_activation_normalised": 0.8829,
+        "imu_movement_normalised": 0.6192
+      },
+      {
+        "time_seconds": 2.28,
+        "emg_activation_normalised": 0.8869,
+        "imu_movement_normalised": 0.4973
+      },
+      {
+        "time_seconds": 2.32,
+        "emg_activation_normalised": 0.8873,
+        "imu_movement_normalised": 0.3924
+      },
+      {
+        "time_seconds": 2.36,
+        "emg_activation_normalised": 0.8821,
+        "imu_movement_normalised": 0.2909
+      },
+      {
+        "time_seconds": 2.4,
+        "emg_activation_normalised": 0.8723,
+        "imu_movement_normalised": 0.1404
+      },
+      {
+        "time_seconds": 2.44,
+        "emg_activation_normalised": 0.8654,
+        "imu_movement_normalised": 0.1244
+      },
+      {
+        "time_seconds": 2.48,
+        "emg_activation_normalised": 0.8678,
+        "imu_movement_normalised": 0.0904
+      },
+      {
+        "time_seconds": 2.52,
+        "emg_activation_normalised": 0.8755,
+        "imu_movement_normalised": 0.1194
+      },
+      {
+        "time_seconds": 2.56,
+        "emg_activation_normalised": 0.8793,
+        "imu_movement_normalised": 0.0928
+      },
+      {
+        "time_seconds": 2.6,
+        "emg_activation_normalised": 0.876,
+        "imu_movement_normalised": 0.1434
+      },
+      {
+        "time_seconds": 2.64,
+        "emg_activation_normalised": 0.8716,
+        "imu_movement_normalised": 0.3442
+      },
+      {
+        "time_seconds": 2.68,
+        "emg_activation_normalised": 0.8699,
+        "imu_movement_normalised": 0.3394
+      },
+      {
+        "time_seconds": 2.72,
+        "emg_activation_normalised": 0.8684,
+        "imu_movement_normalised": 0.4952
+      },
+      {
+        "time_seconds": 2.76,
+        "emg_activation_normalised": 0.8687,
+        "imu_movement_normalised": 0.5609
+      },
+      {
+        "time_seconds": 2.8,
+        "emg_activation_normalised": 0.8759,
+        "imu_movement_normalised": 0.7116
+      },
+      {
+        "time_seconds": 2.84,
+        "emg_activation_normalised": 0.8868,
+        "imu_movement_normalised": 0.763
+      },
+      {
+        "time_seconds": 2.88,
+        "emg_activation_normalised": 0.8916,
+        "imu_movement_normalised": 0.8411
+      },
+      {
+        "time_seconds": 2.92,
+        "emg_activation_normalised": 0.8875,
+        "imu_movement_normalised": 0.8598
+      },
+      {
+        "time_seconds": 2.96,
+        "emg_activation_normalised": 0.8818,
+        "imu_movement_normalised": 0.868
+      },
+      {
+        "time_seconds": 3.0,
+        "emg_activation_normalised": 0.8823,
+        "imu_movement_normalised": 0.9052
+      },
+      {
+        "time_seconds": 3.04,
+        "emg_activation_normalised": 0.8871,
+        "imu_movement_normalised": 0.8978
+      },
+      {
+        "time_seconds": 3.08,
+        "emg_activation_normalised": 0.8883,
+        "imu_movement_normalised": 0.872
+      },
+      {
+        "time_seconds": 3.12,
+        "emg_activation_normalised": 0.8823,
+        "imu_movement_normalised": 0.841
+      },
+      {
+        "time_seconds": 3.16,
+        "emg_activation_normalised": 0.8745,
+        "imu_movement_normalised": 0.7973
+      },
+      {
+        "time_seconds": 3.2,
+        "emg_activation_normalised": 0.8719,
+        "imu_movement_normalised": 0.687
+      },
+      {
+        "time_seconds": 3.24,
+        "emg_activation_normalised": 0.8737,
+        "imu_movement_normalised": 0.628
+      },
+      {
+        "time_seconds": 3.28,
+        "emg_activation_normalised": 0.8739,
+        "imu_movement_normalised": 0.4854
+      },
+      {
+        "time_seconds": 3.32,
+        "emg_activation_normalised": 0.8698,
+        "imu_movement_normalised": 0.3775
+      },
+      {
+        "time_seconds": 3.36,
+        "emg_activation_normalised": 0.8627,
+        "imu_movement_normalised": 0.2829
+      },
+      {
+        "time_seconds": 3.4,
+        "emg_activation_normalised": 0.8564,
+        "imu_movement_normalised": 0.2175
+      },
+      {
+        "time_seconds": 3.44,
+        "emg_activation_normalised": 0.8559,
+        "imu_movement_normalised": 0.1193
+      },
+      {
+        "time_seconds": 3.48,
+        "emg_activation_normalised": 0.8629,
+        "imu_movement_normalised": 0.0474
+      },
+      {
+        "time_seconds": 3.52,
+        "emg_activation_normalised": 0.8738,
+        "imu_movement_normalised": 0.0735
+      },
+      {
+        "time_seconds": 3.56,
+        "emg_activation_normalised": 0.8825,
+        "imu_movement_normalised": 0.1413
+      },
+      {
+        "time_seconds": 3.6,
+        "emg_activation_normalised": 0.885,
+        "imu_movement_normalised": 0.1569
+      },
+      {
+        "time_seconds": 3.64,
+        "emg_activation_normalised": 0.8827,
+        "imu_movement_normalised": 0.2496
+      },
+      {
+        "time_seconds": 3.68,
+        "emg_activation_normalised": 0.8796,
+        "imu_movement_normalised": 0.4253
+      },
+      {
+        "time_seconds": 3.72,
+        "emg_activation_normalised": 0.8772,
+        "imu_movement_normalised": 0.519
+      },
+      {
+        "time_seconds": 3.76,
+        "emg_activation_normalised": 0.8773,
+        "imu_movement_normalised": 0.5556
+      },
+      {
+        "time_seconds": 3.8,
+        "emg_activation_normalised": 0.8795,
+        "imu_movement_normalised": 0.7154
+      },
+      {
+        "time_seconds": 3.84,
+        "emg_activation_normalised": 0.8777,
+        "imu_movement_normalised": 0.7328
+      },
+      {
+        "time_seconds": 3.88,
+        "emg_activation_normalised": 0.8698,
+        "imu_movement_normalised": 0.8473
+      },
+      {
+        "time_seconds": 3.92,
+        "emg_activation_normalised": 0.8624,
+        "imu_movement_normalised": 0.8748
+      },
+      {
+        "time_seconds": 3.96,
+        "emg_activation_normalised": 0.863,
+        "imu_movement_normalised": 0.9161
+      },
+      {
+        "time_seconds": 4.0,
+        "emg_activation_normalised": 0.8696,
+        "imu_movement_normalised": 0.9412
+      },
+      {
+        "time_seconds": 4.04,
+        "emg_activation_normalised": 0.8733,
+        "imu_movement_normalised": 0.9322
+      },
+      {
+        "time_seconds": 4.08,
+        "emg_activation_normalised": 0.8714,
+        "imu_movement_normalised": 0.8731
+      },
+      {
+        "time_seconds": 4.12,
+        "emg_activation_normalised": 0.869,
+        "imu_movement_normalised": 0.8461
+      },
+      {
+        "time_seconds": 4.16,
+        "emg_activation_normalised": 0.8714,
+        "imu_movement_normalised": 0.7936
+      },
+      {
+        "time_seconds": 4.2,
+        "emg_activation_normalised": 0.8765,
+        "imu_movement_normalised": 0.7072
+      },
+      {
+        "time_seconds": 4.24,
+        "emg_activation_normalised": 0.879,
+        "imu_movement_normalised": 0.551
+      },
+      {
+        "time_seconds": 4.28,
+        "emg_activation_normalised": 0.8781,
+        "imu_movement_normalised": 0.506
+      },
+      {
+        "time_seconds": 4.32,
+        "emg_activation_normalised": 0.8768,
+        "imu_movement_normalised": 0.3983
+      },
+      {
+        "time_seconds": 4.36,
+        "emg_activation_normalised": 0.8772,
+        "imu_movement_normalised": 0.2779
+      },
+      {
+        "time_seconds": 4.4,
+        "emg_activation_normalised": 0.8768,
+        "imu_movement_normalised": 0.2105
+      },
+      {
+        "time_seconds": 4.44,
+        "emg_activation_normalised": 0.8717,
+        "imu_movement_normalised": 0.1265
+      },
+      {
+        "time_seconds": 4.48,
+        "emg_activation_normalised": 0.8658,
+        "imu_movement_normalised": 0.079
+      },
+      {
+        "time_seconds": 4.52,
+        "emg_activation_normalised": 0.8662,
+        "imu_movement_normalised": 0.0669
+      },
+      {
+        "time_seconds": 4.56,
+        "emg_activation_normalised": 0.8705,
+        "imu_movement_normalised": 0.119
+      },
+      {
+        "time_seconds": 4.6,
+        "emg_activation_normalised": 0.8711,
+        "imu_movement_normalised": 0.1693
+      },
+      {
+        "time_seconds": 4.64,
+        "emg_activation_normalised": 0.868,
+        "imu_movement_normalised": 0.3076
+      },
+      {
+        "time_seconds": 4.68,
+        "emg_activation_normalised": 0.8667,
+        "imu_movement_normalised": 0.3703
+      },
+      {
+        "time_seconds": 4.72,
+        "emg_activation_normalised": 0.8696,
+        "imu_movement_normalised": 0.4952
+      },
+      {
+        "time_seconds": 4.76,
+        "emg_activation_normalised": 0.8755,
+        "imu_movement_normalised": 0.5653
+      },
+      {
+        "time_seconds": 4.8,
+        "emg_activation_normalised": 0.8796,
+        "imu_movement_normalised": 0.7368
+      },
+      {
+        "time_seconds": 4.84,
+        "emg_activation_normalised": 0.8769,
+        "imu_movement_normalised": 0.8128
+      },
+      {
+        "time_seconds": 4.88,
+        "emg_activation_normalised": 0.871,
+        "imu_movement_normalised": 0.8208
+      },
+      {
+        "time_seconds": 4.92,
+        "emg_activation_normalised": 0.8711,
+        "imu_movement_normalised": 0.8538
+      },
+      {
+        "time_seconds": 4.96,
+        "emg_activation_normalised": 0.8792,
+        "imu_movement_normalised": 0.919
+      },
+      {
+        "time_seconds": 5.0,
+        "emg_activation_normalised": 0.8861,
+        "imu_movement_normalised": 0.901
+      },
+      {
+        "time_seconds": 5.04,
+        "emg_activation_normalised": 0.882,
+        "imu_movement_normalised": 0.8924
+      },
+      {
+        "time_seconds": 5.08,
+        "emg_activation_normalised": 0.8704,
+        "imu_movement_normalised": 0.9038
+      },
+      {
+        "time_seconds": 5.12,
+        "emg_activation_normalised": 0.8656,
+        "imu_movement_normalised": 0.811
+      },
+      {
+        "time_seconds": 5.16,
+        "emg_activation_normalised": 0.8734,
+        "imu_movement_normalised": 0.7399
+      },
+      {
+        "time_seconds": 5.2,
+        "emg_activation_normalised": 0.8855,
+        "imu_movement_normalised": 0.724
+      },
+      {
+        "time_seconds": 5.24,
+        "emg_activation_normalised": 0.8904,
+        "imu_movement_normalised": 0.5956
+      },
+      {
+        "time_seconds": 5.28,
+        "emg_activation_normalised": 0.8851,
+        "imu_movement_normalised": 0.5179
+      },
+      {
+        "time_seconds": 5.32,
+        "emg_activation_normalised": 0.8743,
+        "imu_movement_normalised": 0.3908
+      },
+      {
+        "time_seconds": 5.36,
+        "emg_activation_normalised": 0.8666,
+        "imu_movement_normalised": 0.2686
+      },
+      {
+        "time_seconds": 5.4,
+        "emg_activation_normalised": 0.8669,
+        "imu_movement_normalised": 0.2202
+      },
+      {
+        "time_seconds": 5.44,
+        "emg_activation_normalised": 0.8694,
+        "imu_movement_normalised": 0.1136
+      },
+      {
+        "time_seconds": 5.48,
+        "emg_activation_normalised": 0.8684,
+        "imu_movement_normalised": 0.0717
+      },
+      {
+        "time_seconds": 5.52,
+        "emg_activation_normalised": 0.8686,
+        "imu_movement_normalised": 0.1142
+      },
+      {
+        "time_seconds": 5.56,
+        "emg_activation_normalised": 0.8732,
+        "imu_movement_normalised": 0.1309
+      },
+      {
+        "time_seconds": 5.6,
+        "emg_activation_normalised": 0.8765,
+        "imu_movement_normalised": 0.1439
+      },
+      {
+        "time_seconds": 5.64,
+        "emg_activation_normalised": 0.8757,
+        "imu_movement_normalised": 0.2658
+      },
+      {
+        "time_seconds": 5.68,
+        "emg_activation_normalised": 0.8751,
+        "imu_movement_normalised": 0.398
+      },
+      {
+        "time_seconds": 5.72,
+        "emg_activation_normalised": 0.8802,
+        "imu_movement_normalised": 0.4902
+      },
+      {
+        "time_seconds": 5.76,
+        "emg_activation_normalised": 0.89,
+        "imu_movement_normalised": 0.5935
+      },
+      {
+        "time_seconds": 5.8,
+        "emg_activation_normalised": 0.8947,
+        "imu_movement_normalised": 0.6371
+      },
+      {
+        "time_seconds": 5.84,
+        "emg_activation_normalised": 0.8859,
+        "imu_movement_normalised": 0.8297
+      },
+      {
+        "time_seconds": 5.88,
+        "emg_activation_normalised": 0.8703,
+        "imu_movement_normalised": 0.8248
+      },
+      {
+        "time_seconds": 5.92,
+        "emg_activation_normalised": 0.8639,
+        "imu_movement_normalised": 0.8986
+      },
+      {
+        "time_seconds": 5.96,
+        "emg_activation_normalised": 0.8709,
+        "imu_movement_normalised": 0.9086
+      },
+      {
+        "time_seconds": 6.0,
+        "emg_activation_normalised": 0.879,
+        "imu_movement_normalised": 0.9443
+      },
+      {
+        "time_seconds": 6.04,
+        "emg_activation_normalised": 0.8778,
+        "imu_movement_normalised": 0.9473
+      },
+      {
+        "time_seconds": 6.08,
+        "emg_activation_normalised": 0.8724,
+        "imu_movement_normalised": 0.9234
+      },
+      {
+        "time_seconds": 6.12,
+        "emg_activation_normalised": 0.8729,
+        "imu_movement_normalised": 0.7723
+      },
+      {
+        "time_seconds": 6.16,
+        "emg_activation_normalised": 0.8791,
+        "imu_movement_normalised": 0.8003
+      },
+      {
+        "time_seconds": 6.2,
+        "emg_activation_normalised": 0.8824,
+        "imu_movement_normalised": 0.6975
+      },
+      {
+        "time_seconds": 6.24,
+        "emg_activation_normalised": 0.8783,
+        "imu_movement_normalised": 0.5547
+      },
+      {
+        "time_seconds": 6.28,
+        "emg_activation_normalised": 0.8732,
+        "imu_movement_normalised": 0.5065
+      },
+      {
+        "time_seconds": 6.32,
+        "emg_activation_normalised": 0.8766,
+        "imu_movement_normalised": 0.4098
+      },
+      {
+        "time_seconds": 6.36,
+        "emg_activation_normalised": 0.8872,
+        "imu_movement_normalised": 0.1974
+      },
+      {
+        "time_seconds": 6.4,
+        "emg_activation_normalised": 0.8935,
+        "imu_movement_normalised": 0.2058
+      },
+      {
+        "time_seconds": 6.44,
+        "emg_activation_normalised": 0.8893,
+        "imu_movement_normalised": 0.1269
+      },
+      {
+        "time_seconds": 6.48,
+        "emg_activation_normalised": 0.8811,
+        "imu_movement_normalised": 0.0
+      },
+      {
+        "time_seconds": 6.52,
+        "emg_activation_normalised": 0.8779,
+        "imu_movement_normalised": 0.1259
+      },
+      {
+        "time_seconds": 6.56,
+        "emg_activation_normalised": 0.8817,
+        "imu_movement_normalised": 0.0926
+      },
+      {
+        "time_seconds": 6.6,
+        "emg_activation_normalised": 0.8873,
+        "imu_movement_normalised": 0.1872
+      },
+      {
+        "time_seconds": 6.64,
+        "emg_activation_normalised": 0.8895,
+        "imu_movement_normalised": 0.2787
+      },
+      {
+        "time_seconds": 6.68,
+        "emg_activation_normalised": 0.8877,
+        "imu_movement_normalised": 0.3772
+      },
+      {
+        "time_seconds": 6.72,
+        "emg_activation_normalised": 0.8836,
+        "imu_movement_normalised": 0.5032
+      },
+      {
+        "time_seconds": 6.76,
+        "emg_activation_normalised": 0.878,
+        "imu_movement_normalised": 0.509
+      },
+      {
+        "time_seconds": 6.8,
+        "emg_activation_normalised": 0.8703,
+        "imu_movement_normalised": 0.6791
+      },
+      {
+        "time_seconds": 6.84,
+        "emg_activation_normalised": 0.8638,
+        "imu_movement_normalised": 0.7228
+      },
+      {
+        "time_seconds": 6.88,
+        "emg_activation_normalised": 0.8642,
+        "imu_movement_normalised": 0.826
+      },
+      {
+        "time_seconds": 6.92,
+        "emg_activation_normalised": 0.8726,
+        "imu_movement_normalised": 0.8923
+      },
+      {
+        "time_seconds": 6.96,
+        "emg_activation_normalised": 0.8834,
+        "imu_movement_normalised": 0.9198
+      },
+      {
+        "time_seconds": 7.0,
+        "emg_activation_normalised": 0.8869,
+        "imu_movement_normalised": 0.9312
+      },
+      {
+        "time_seconds": 7.04,
+        "emg_activation_normalised": 0.881,
+        "imu_movement_normalised": 0.9559
+      },
+      {
+        "time_seconds": 7.08,
+        "emg_activation_normalised": 0.8734,
+        "imu_movement_normalised": 0.8845
+      },
+      {
+        "time_seconds": 7.12,
+        "emg_activation_normalised": 0.8692,
+        "imu_movement_normalised": 0.8524
+      },
+      {
+        "time_seconds": 7.16,
+        "emg_activation_normalised": 0.866,
+        "imu_movement_normalised": 0.7942
+      },
+      {
+        "time_seconds": 7.2,
+        "emg_activation_normalised": 0.8633,
+        "imu_movement_normalised": 0.6775
+      },
+      {
+        "time_seconds": 7.24,
+        "emg_activation_normalised": 0.8666,
+        "imu_movement_normalised": 0.6161
+      },
+      {
+        "time_seconds": 7.28,
+        "emg_activation_normalised": 0.8788,
+        "imu_movement_normalised": 0.5164
+      },
+      {
+        "time_seconds": 7.32,
+        "emg_activation_normalised": 0.8931,
+        "imu_movement_normalised": 0.3884
+      },
+      {
+        "time_seconds": 7.36,
+        "emg_activation_normalised": 0.9003,
+        "imu_movement_normalised": 0.2891
+      },
+      {
+        "time_seconds": 7.4,
+        "emg_activation_normalised": 0.8972,
+        "imu_movement_normalised": 0.1938
+      },
+      {
+        "time_seconds": 7.44,
+        "emg_activation_normalised": 0.8838,
+        "imu_movement_normalised": 0.1105
+      },
+      {
+        "time_seconds": 7.48,
+        "emg_activation_normalised": 0.8655,
+        "imu_movement_normalised": 0.0613
+      },
+      {
+        "time_seconds": 7.52,
+        "emg_activation_normalised": 0.8559,
+        "imu_movement_normalised": 0.083
+      },
+      {
+        "time_seconds": 7.56,
+        "emg_activation_normalised": 0.8627,
+        "imu_movement_normalised": 0.1097
+      },
+      {
+        "time_seconds": 7.6,
+        "emg_activation_normalised": 0.8785,
+        "imu_movement_normalised": 0.2074
+      },
+      {
+        "time_seconds": 7.64,
+        "emg_activation_normalised": 0.8905,
+        "imu_movement_normalised": 0.2601
+      },
+      {
+        "time_seconds": 7.68,
+        "emg_activation_normalised": 0.8911,
+        "imu_movement_normalised": 0.3735
+      },
+      {
+        "time_seconds": 7.72,
+        "emg_activation_normalised": 0.8837,
+        "imu_movement_normalised": 0.4929
+      },
+      {
+        "time_seconds": 7.76,
+        "emg_activation_normalised": 0.8774,
+        "imu_movement_normalised": 0.6126
+      },
+      {
+        "time_seconds": 7.8,
+        "emg_activation_normalised": 0.8744,
+        "imu_movement_normalised": 0.6536
+      },
+      {
+        "time_seconds": 7.84,
+        "emg_activation_normalised": 0.8738,
+        "imu_movement_normalised": 0.7927
+      },
+      {
+        "time_seconds": 7.88,
+        "emg_activation_normalised": 0.8776,
+        "imu_movement_normalised": 0.8166
+      },
+      {
+        "time_seconds": 7.92,
+        "emg_activation_normalised": 0.8847,
+        "imu_movement_normalised": 0.9037
+      },
+      {
+        "time_seconds": 7.96,
+        "emg_activation_normalised": 0.8905,
+        "imu_movement_normalised": 0.9328
+      },
+      {
+        "time_seconds": 8.0,
+        "emg_activation_normalised": 0.8905,
+        "imu_movement_normalised": 0.908
+      },
+      {
+        "time_seconds": 8.04,
+        "emg_activation_normalised": 0.8859,
+        "imu_movement_normalised": 0.8973
+      },
+      {
+        "time_seconds": 8.08,
+        "emg_activation_normalised": 0.8848,
+        "imu_movement_normalised": 0.9049
+      },
+      {
+        "time_seconds": 8.12,
+        "emg_activation_normalised": 0.8899,
+        "imu_movement_normalised": 0.8537
+      },
+      {
+        "time_seconds": 8.16,
+        "emg_activation_normalised": 0.8911,
+        "imu_movement_normalised": 0.7746
+      },
+      {
+        "time_seconds": 8.2,
+        "emg_activation_normalised": 0.8804,
+        "imu_movement_normalised": 0.72
+      },
+      {
+        "time_seconds": 8.24,
+        "emg_activation_normalised": 0.8669,
+        "imu_movement_normalised": 0.5804
+      },
+      {
+        "time_seconds": 8.28,
+        "emg_activation_normalised": 0.8664,
+        "imu_movement_normalised": 0.5153
+      },
+      {
+        "time_seconds": 8.32,
+        "emg_activation_normalised": 0.8795,
+        "imu_movement_normalised": 0.4083
+      },
+      {
+        "time_seconds": 8.36,
+        "emg_activation_normalised": 0.8922,
+        "imu_movement_normalised": 0.2568
+      },
+      {
+        "time_seconds": 8.4,
+        "emg_activation_normalised": 0.8927,
+        "imu_movement_normalised": 0.1821
+      },
+      {
+        "time_seconds": 8.44,
+        "emg_activation_normalised": 0.8859,
+        "imu_movement_normalised": 0.1151
+      },
+      {
+        "time_seconds": 8.48,
+        "emg_activation_normalised": 0.8818,
+        "imu_movement_normalised": 0.0932
+      },
+      {
+        "time_seconds": 8.52,
+        "emg_activation_normalised": 0.8806,
+        "imu_movement_normalised": 0.0359
+      },
+      {
+        "time_seconds": 8.56,
+        "emg_activation_normalised": 0.8801,
+        "imu_movement_normalised": 0.1506
+      },
+      {
+        "time_seconds": 8.6,
+        "emg_activation_normalised": 0.8814,
+        "imu_movement_normalised": 0.1476
+      },
+      {
+        "time_seconds": 8.64,
+        "emg_activation_normalised": 0.8838,
+        "imu_movement_normalised": 0.308
+      },
+      {
+        "time_seconds": 8.68,
+        "emg_activation_normalised": 0.8846,
+        "imu_movement_normalised": 0.3832
+      },
+      {
+        "time_seconds": 8.72,
+        "emg_activation_normalised": 0.8835,
+        "imu_movement_normalised": 0.5198
+      },
+      {
+        "time_seconds": 8.76,
+        "emg_activation_normalised": 0.8842,
+        "imu_movement_normalised": 0.5258
+      },
+      {
+        "time_seconds": 8.8,
+        "emg_activation_normalised": 0.8867,
+        "imu_movement_normalised": 0.7206
+      },
+      {
+        "time_seconds": 8.84,
+        "emg_activation_normalised": 0.8868,
+        "imu_movement_normalised": 0.8235
+      },
+      {
+        "time_seconds": 8.88,
+        "emg_activation_normalised": 0.8829,
+        "imu_movement_normalised": 0.8423
+      },
+      {
+        "time_seconds": 8.92,
+        "emg_activation_normalised": 0.8803,
+        "imu_movement_normalised": 0.8686
+      },
+      {
+        "time_seconds": 8.96,
+        "emg_activation_normalised": 0.8824,
+        "imu_movement_normalised": 0.9002
+      },
+      {
+        "time_seconds": 9.0,
+        "emg_activation_normalised": 0.8829,
+        "imu_movement_normalised": 0.9079
+      },
+      {
+        "time_seconds": 9.04,
+        "emg_activation_normalised": 0.8756,
+        "imu_movement_normalised": 0.9036
+      },
+      {
+        "time_seconds": 9.08,
+        "emg_activation_normalised": 0.8677,
+        "imu_movement_normalised": 0.8925
+      },
+      {
+        "time_seconds": 9.12,
+        "emg_activation_normalised": 0.8672,
+        "imu_movement_normalised": 0.815
+      },
+      {
+        "time_seconds": 9.16,
+        "emg_activation_normalised": 0.8705,
+        "imu_movement_normalised": 0.8095
+      },
+      {
+        "time_seconds": 9.2,
+        "emg_activation_normalised": 0.8711,
+        "imu_movement_normalised": 0.7187
+      },
+      {
+        "time_seconds": 9.24,
+        "emg_activation_normalised": 0.8698,
+        "imu_movement_normalised": 0.6374
+      },
+      {
+        "time_seconds": 9.28,
+        "emg_activation_normalised": 0.8723,
+        "imu_movement_normalised": 0.477
+      },
+      {
+        "time_seconds": 9.32,
+        "emg_activation_normalised": 0.8794,
+        "imu_movement_normalised": 0.386
+      },
+      {
+        "time_seconds": 9.36,
+        "emg_activation_normalised": 0.8842,
+        "imu_movement_normalised": 0.2995
+      },
+      {
+        "time_seconds": 9.4,
+        "emg_activation_normalised": 0.8827,
+        "imu_movement_normalised": 0.1294
+      },
+      {
+        "time_seconds": 9.44,
+        "emg_activation_normalised": 0.878,
+        "imu_movement_normalised": 0.1326
+      },
+      {
+        "time_seconds": 9.48,
+        "emg_activation_normalised": 0.878,
+        "imu_movement_normalised": 0.0354
+      },
+      {
+        "time_seconds": 9.52,
+        "emg_activation_normalised": 0.8833,
+        "imu_movement_normalised": 0.0545
+      },
+      {
+        "time_seconds": 9.56,
+        "emg_activation_normalised": 0.8832,
+        "imu_movement_normalised": 0.1121
+      },
+      {
+        "time_seconds": 9.6,
+        "emg_activation_normalised": 0.8724,
+        "imu_movement_normalised": 0.164
+      },
+      {
+        "time_seconds": 9.64,
+        "emg_activation_normalised": 0.8609,
+        "imu_movement_normalised": 0.2712
+      },
+      {
+        "time_seconds": 9.68,
+        "emg_activation_normalised": 0.8614,
+        "imu_movement_normalised": 0.3641
+      },
+      {
+        "time_seconds": 9.72,
+        "emg_activation_normalised": 0.8746,
+        "imu_movement_normalised": 0.4682
+      },
+      {
+        "time_seconds": 9.76,
+        "emg_activation_normalised": 0.8863,
+        "imu_movement_normalised": 0.5808
+      },
+      {
+        "time_seconds": 9.8,
+        "emg_activation_normalised": 0.8836,
+        "imu_movement_normalised": 0.661
+      },
+      {
+        "time_seconds": 9.84,
+        "emg_activation_normalised": 0.8715,
+        "imu_movement_normalised": 0.7284
+      },
+      {
+        "time_seconds": 9.88,
+        "emg_activation_normalised": 0.8639,
+        "imu_movement_normalised": 0.7974
+      },
+      {
+        "time_seconds": 9.92,
+        "emg_activation_normalised": 0.8638,
+        "imu_movement_normalised": 0.8332
+      },
+      {
+        "time_seconds": 9.96,
+        "emg_activation_normalised": 0.8652,
+        "imu_movement_normalised": 0.9049
+      }
+    ],
+    "data_note": "Signals are independently normalised for visual comparison; their amplitudes are not directly comparable."
+  }
+}

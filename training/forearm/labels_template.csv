@@ -1,0 +1,3 @@
+recording_id,participant_id,session_id,repetition_id,start_device_time_us,end_device_time_us,movement_label,exertion_rating,reviewer_id,notes
+FOREARM_DEMO_001,TESTER_001,SESSION_001,REP_001,0,3000000,correct,,REVIEWER_001,
+

@@ -1,0 +1,12 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "--file"
+      - "Dockerfile.ui"
+      - "--tag"
+      - "asia-southeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kinesis-web:latest"
+      - "."
+images:
+  - "asia-southeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kinesis-web:latest"
+

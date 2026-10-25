@@ -1,0 +1,33 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=8080
+
+WORKDIR /app
+
+COPY requirements-ui.txt ./requirements-ui.txt
+RUN python -m pip install --no-cache-dir -r requirements-ui.txt
+
+COPY app.py ./app.py
+COPY sensor_feed.py ./sensor_feed.py
+COPY nexus_runtime.py ./nexus_runtime.py
+COPY forearm_movement_runtime.py ./forearm_movement_runtime.py
+COPY forearm_fatigue_runtime.py ./forearm_fatigue_runtime.py
+COPY quadriceps_runtime.py ./quadriceps_runtime.py
+COPY model1_signal_pipeline.py ./model1_signal_pipeline.py
+COPY live_model1_runtime.py ./live_model1_runtime.py
+COPY synthetic_live_demo.py ./synthetic_live_demo.py
+COPY firebase_sensor_adapter.py ./firebase_sensor_adapter.py
+COPY realtime_input_contract.py ./realtime_input_contract.py
+COPY session_packet.py ./session_packet.py
+COPY session_report.py ./session_report.py
+COPY artifacts/models ./artifacts/models
+COPY data ./data
+COPY agent ./agent
+COPY knowledge ./knowledge
+
+EXPOSE 8080
+
+CMD ["sh", "-c", "exec streamlit run app.py --server.address=0.0.0.0 --server.port=${PORT} --server.headless=true --browser.gatherUsageStats=false"]
+

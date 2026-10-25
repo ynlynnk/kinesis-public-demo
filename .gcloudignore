@@ -1,0 +1,39 @@
+# Local Python environment and caches
+.venv/
+.agent-venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Source-control and editor metadata
+.git/
+.gitignore
+.vscode/
+
+# Local-only training and application files
+# Exclude generated artifacts by default, but include the trained CNN checkpoint
+# required by the public dashboard at runtime.
+artifacts/*
+!artifacts/models/
+artifacts/models/*
+!artifacts/models/kinesis_nexus_cnn.pt
+!artifacts/models/kinesis_forearm_movement_cnn.pt
+!artifacts/models/kinesis_forearm_verification_samples.npz
+!artifacts/models/kinesis_forearm_fatigue_cnn.pt
+!artifacts/models/kinesis_fatigue_verification_samples.npz
+!artifacts/models/kinesis_quadriceps_movement_cnn.pt
+!artifacts/models/kinesis_quadriceps_fatigue_cnn.pt
+configs/
+data/raw/
+requirements.txt
+
+# Local synthetic test output is not required by the public UI image
+agent/session_context_test.json
+agent/test_*.py
+
+# Secrets and local logs must never be uploaded
+.env
+.env.*
+*.pem
+*.key
+*.log

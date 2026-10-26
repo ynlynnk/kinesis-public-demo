@@ -279,7 +279,12 @@ CHAT_CSS = """<style>
 .st-key-kin_chat_panel {position: fixed; right: 1.5rem; bottom: 4.8rem; z-index: 1000;
     width: min(%(width)spx, calc(100vw - 2rem)) !important; max-height: calc(100vh - 7rem); overflow-y: auto;
     background: %(bg)s; border: 1px solid %(line)s; border-radius: 14px; padding: 0.9rem 1rem 0.6rem;
-    box-shadow: 0 10px 34px rgba(0, 0, 0, %(shadow)s);}
+    box-shadow: 0 10px 34px rgba(0, 0, 0, %(shadow)s);
+    transform-origin: bottom right; transition: width 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: kin-chat-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);}
+@keyframes kin-chat-in {from {opacity: 0; transform: translateY(14px) scale(0.94);}
+                        to {opacity: 1; transform: none;}}
+@media (prefers-reduced-motion: reduce) {.st-key-kin_chat_panel {transition: none; animation: none;}}
 </style>"""
 CHAT_WIDTH, CHAT_HEIGHT = 460, 420   # original panel width, message area height (px)
 

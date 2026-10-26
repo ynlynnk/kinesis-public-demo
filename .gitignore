@@ -27,3 +27,6 @@ data/raw/
 # Operating-system files
 .DS_Store
 Thumbs.db
+
+# Patient session data handed over by the KINESIS app (never commit it)
+report/
